@@ -1,0 +1,84 @@
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
+const https = require("https");
+const http = require("http");
+
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/api/status", (req, res) => {
+  res.json({
+    success: true,
+    message: "Video Downloader Server is running!"
+  });
+});
+
+app.get("/api/download", (req, res) => {
+  const videoUrl = req.query.url;
+
+  if (!videoUrl) {
+    return res.status(400).send("Video URL is required.");
+  }
+
+  let parsedUrl;
+
+  try {
+    parsedUrl = new URL(videoUrl);
+  } catch {
+    return res.status(400).send("Invalid video URL.");
+  }
+
+  if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+    return res.status(400).send("Only HTTP/HTTPS URLs are supported.");
+  }
+
+  const client = parsedUrl.protocol === "https:" ? https : http;
+
+  client.get(videoUrl, (videoResponse) => {
+
+    if (
+      videoResponse.statusCode >= 300 &&
+      videoResponse.statusCode < 400 &&
+      videoResponse.headers.location
+    ) {
+      return res.redirect(
+        `/api/download?url=${encodeURIComponent(videoResponse.headers.location)}`
+      );
+    }
+
+    if (videoResponse.statusCode !== 200) {
+      return res.status(400).send(
+        `Unable to download video. Server returned ${videoResponse.statusCode}.`
+      );
+    }
+
+    const contentType =
+      videoResponse.headers["content-type"] || "video/mp4";
+
+    if (!contentType.toLowerCase().startsWith("video/")) {
+      return res.status(400).send(
+        "The supplied URL does not appear to be a direct video file."
+      );
+    }
+
+    res.setHeader("Content-Type", contentType);
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="downloaded-video"'
+    );
+
+    videoResponse.pipe(res);
+
+  }).on("error", () => {
+    res.status(500).send("Download failed.");
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});

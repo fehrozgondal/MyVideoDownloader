@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MyDownloader</title>
+
+  <meta name="description" content="MyDownloader is a simple tool for downloading authorized direct video files quickly and easily.">
+
+<meta name="keywords" content="video downloader, direct video downloader, MP4 downloader, video download">
+
+<meta name="robots" content="index, follow">
+
+<meta name="author" content="MyDownloader">
+
+<link rel="canonical" href="https://YOUR-DOMAIN.com/">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6ff;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      height: 70px;
+      padding: 0 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 28px;
+    }
+
+    .hero {
+      min-height: 620px;
+      padding: 70px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 50px;
+      margin-bottom: 18px;
+    }
+
+    h1 span {
+      color: #5146e5;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #64748b;
+      margin-bottom: 38px;
+    }
+
+    .download-box {
+      max-width: 850px;
+      margin: auto;
+      padding: 12px;
+      background: white;
+      border-radius: 15px;
+      display: flex;
+      gap: 10px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.10);
+    }
+
+    #videoUrl {
+      flex: 1;
+      height: 55px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 0 16px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #downloadBtn {
+      width: 140px;
+      border: none;
+      border-radius: 10px;
+      background: #5146e5;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #downloadBtn:hover {
+      background: #4038c7;
+    }
+
+    #downloadBtn:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .qualities {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .quality {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 11px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    .quality.active {
+      background: #5146e5;
+      color: white;
+      border-color: #5146e5;
+    }
+
+    #status {
+      min-height: 25px;
+      margin: 15px;
+      font-weight: bold;
+    }
+
+    .ad {
+      width: min(730px, 90%);
+      height: 90px;
+      margin: 30px auto;
+      background: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #64748b;
+      border-radius: 8px;
+    }
+
+    .note {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+
+    footer {
+      background: #111827;
+      color: #aaa;
+      text-align: center;
+      padding: 25px;
+    }
+
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 36px;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .download-box {
+        flex-direction: column;
+      }
+
+      #downloadBtn {
+        width: 100%;
+        height: 55px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">⬇ MyDownloader</div>
+
+ <nav>
+  <a href="/">Home</a>
+  <a href="/about.html">About</a>
+  <a href="/privacy.html">Privacy</a>
+  <a href="/terms.html">Terms</a>
+  <a href="/contact.html">Contact</a>
+</nav>
+</header>
+
+<section class="hero">
+
+  <h1>Download Your <span>Video</span></h1>
+
+  <p class="subtitle">
+    Paste an authorized direct video URL and download your video easily.
+  </p>
+
+  <div class="download-box">
+
+    <input
+      id="videoUrl"
+      type="url"
+      placeholder="Paste direct video URL here..."
+    >
+
+    <button id="downloadBtn">
+      Download
+    </button>
+
+  </div>
+
+  <div class="qualities">
+
+    <button class="quality active" data-quality="360p">
+      360p
+    </button>
+
+    <button class="quality" data-quality="480p">
+      480p
+    </button>
+
+    <button class="quality" data-quality="720p">
+      720p
+    </button>
+
+    <button class="quality" data-quality="1080p">
+      1080p
+    </button>
+
+    <button class="quality" data-quality="MP4">
+      MP4
+    </button>
+
+  </div>
+
+  <div id="status"></div>
+
+  <div class="ad">
+    Advertisement
+  </div>
+
+  <p class="note">
+    Only download videos that you own or have permission to download.
+  </p>
+
+</section>
+
+
+ <footer>
+  <div>
+    © 2026 MyDownloader — All Rights Reserved
+  </div>
+
+  <div style="margin-top: 10px;">
+    <a href="/about.html" style="color:#aaa; margin:0 10px;">
+      About
+    </a>
+
+    <a href="/privacy.html" style="color:#aaa; margin:0 10px;">
+      Privacy Policy
+    </a>
+
+    <a href="/terms.html" style="color:#aaa; margin:0 10px;">
+      Terms of Service
+    </a>
+
+    <a href="/contact.html" style="color:#aaa; margin:0 10px;">
+      Contact
+    </a>
+  </div>
+</footer>
+
+
+<script>
+
+  const downloadBtn = document.getElementById("downloadBtn");
+  const videoUrl = document.getElementById("videoUrl");
+  const status = document.getElementById("status");
+
+  let selectedQuality = "360p";
+
+
+  document.querySelectorAll(".quality").forEach(button => {
+
+    button.addEventListener("click", function () {
+
+      document.querySelectorAll(".quality").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      this.classList.add("active");
+
+      selectedQuality = this.dataset.quality;
+
+    });
+
+  });
+
+
+  downloadBtn.addEventListener("click", function () {
+
+    const url = videoUrl.value.trim();
+
+    if (!url) {
+      status.textContent = "Please paste a video URL.";
+      return;
+    }
+
+    try {
+
+      const parsedUrl = new URL(url);
+
+      if (
+        parsedUrl.protocol !== "http:" &&
+        parsedUrl.protocol !== "https:"
+      ) {
+        throw new Error();
+      }
+
+    } catch {
+
+      status.textContent = "Please enter a valid HTTP/HTTPS URL.";
+      return;
+
+    }
+
+
+    status.textContent =
+      "Preparing " + selectedQuality + " download...";
+
+    downloadBtn.textContent = "Preparing...";
+    downloadBtn.disabled = true;
+
+
+    const apiUrl =
+      "/api/download?url=" +
+      encodeURIComponent(url);
+
+
+    window.location.href = apiUrl;
+
+
+    setTimeout(() => {
+
+      downloadBtn.textContent = "Download";
+      downloadBtn.disabled = false;
+
+      status.textContent =
+        "Download request sent.";
+
+    }, 2500);
+
+  });
+
+</script>
+
+</body>
+</html>
