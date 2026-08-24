@@ -5,12 +5,14 @@ const https = require("https");
 const http = require("http");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve website files
 app.use(express.static(path.join(__dirname, "public")));
 
+// Test endpoint
 app.get("/api/status", (req, res) => {
   res.json({
     success: true,
@@ -18,6 +20,7 @@ app.get("/api/status", (req, res) => {
   });
 });
 
+// Authorized direct-video URL downloader
 app.get("/api/download", (req, res) => {
   const videoUrl = req.query.url;
 
@@ -37,17 +40,21 @@ app.get("/api/download", (req, res) => {
     return res.status(400).send("Only HTTP/HTTPS URLs are supported.");
   }
 
-  const client = parsedUrl.protocol === "https:" ? https : http;
+  const client =
+    parsedUrl.protocol === "https:" ? https : http;
 
   client.get(videoUrl, (videoResponse) => {
 
+    // Follow one redirect
     if (
       videoResponse.statusCode >= 300 &&
       videoResponse.statusCode < 400 &&
       videoResponse.headers.location
     ) {
       return res.redirect(
-        `/api/download?url=${encodeURIComponent(videoResponse.headers.location)}`
+        `/api/download?url=${encodeURIComponent(
+          videoResponse.headers.location
+        )}`
       );
     }
 
@@ -58,7 +65,7 @@ app.get("/api/download", (req, res) => {
     }
 
     const contentType =
-      videoResponse.headers["content-type"] || "video/mp4";
+      videoResponse.headers["content-type"] || "";
 
     if (!contentType.toLowerCase().startsWith("video/")) {
       return res.status(400).send(
@@ -69,16 +76,17 @@ app.get("/api/download", (req, res) => {
     res.setHeader("Content-Type", contentType);
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="downloaded-video"'
+      'attachment; filename="downloaded-video.mp4"'
     );
 
     videoResponse.pipe(res);
 
   }).on("error", () => {
-    res.status(500).send("Download failed.");
+    if (!res.headersSent) {
+      res.status(500).send("Download failed.");
+    }
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// Export for Vercel
+module.exports = app;
